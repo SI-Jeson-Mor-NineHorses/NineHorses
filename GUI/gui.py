@@ -10,7 +10,7 @@ pygame.display.set_caption('Python Jeson Mor Game')
 clock = pygame.time.Clock() #odświeżanie okna
 
 # Załadowanie wygerowanej planszy
-bg = pygame.image.load("assets/board.png").convert()
+bg = pygame.image.load("../assets/board.png").convert()
 player = 1
 
 board = Board()
