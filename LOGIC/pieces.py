@@ -15,7 +15,7 @@ def move_check(your_color, y, x, board):
     if x < 0 or x > 8 or y < 0 or y > 8:
         return False
     piece = board.array[y][x]
-    if piece == None:
+    if piece.color == 'x':
         return True
     else:
         if piece.color != your_color:
@@ -25,9 +25,10 @@ def move_check(your_color, y, x, board):
 
 class Piece(pygame.sprite.Sprite):
 
-    def __init__(self, color, y, x):
+    def __init__(self, color, rgb, y, x):
         super().__init__()
         self.color = color
+        self.rgb =rgb
 
         # pozycja na macierzy planszy
         self.x = x
@@ -45,7 +46,7 @@ class Piece(pygame.sprite.Sprite):
 
     # podświetlenie wybranej figury na planszy
     def highlight(self):
-        pygame.draw.rect(self.image, (138, 43, 226), (0, 0, 60, 60),  5)
+        pygame.draw.rect(self.image, self.rgb, (0, 0, 60, 60),  5)
         self.highlighed = not self.highlighed
 
     def unhighlight(self):
@@ -57,7 +58,7 @@ class Piece(pygame.sprite.Sprite):
 class Knight(Piece):
 
     def __init__(self, color, y, x):
-        super().__init__(color, y, x)
+        super().__init__(color,(255, 0, 0), y, x)
         self.sprite = pygame.image.load(
             "../assets/{}knight.png".format(self.color))
         self.symbol = "N"
@@ -75,6 +76,14 @@ class Knight(Piece):
 
             if move_check(self.color, newY, newX, board):
                 move_set.add((newY, newX))
-
         return move_set
+
+
+class Empty(Piece):
+    def __init__(self, color,  y, x):
+        super().__init__(color, (0, 200, 0), y, x)
+        self.sprite = pygame.image.load(
+            "../assets/{}knight.png".format(self.color))
+        self.symbol = "N"
+        self.image.blit(self.sprite, (0, 0))
 
