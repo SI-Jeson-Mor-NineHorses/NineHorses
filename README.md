@@ -5,7 +5,7 @@ Jeśli chcesz dodać zadanie lub buga, utwórz nowy Issue z nastęnym numerem:
 - dla interfejsu graficznego `G-1` (G-2 itd.)  
 - dla logiki `L-1` (L-2 itd.)  
 
-Następnie utwórz nowy branch dla tego problemu (jako branch wyjściowy przyjmij branch **gui** albo **logic**, nazwa powiązana z Issue np. `G-1` mile widziana).
+Następnie utwórz nowy branch dla tego problemu (jako branch wyjściowy przyjmij branch **master**, nazwa powiązana z Issue np. `G-1` mile widziana).
 Po zakończeniu prac zmień Issue na PR.  
 
 ### Pomoc w używaniu Issues i Pull Request
@@ -15,7 +15,7 @@ Po instalacji można używać w konsoli polecenia `hub` zamiast `git`
 
 Jeśli **ukończyliście** pracę nad problemem i chcecie zrobić merge request, zróbcie z poziomu konsoli:
 
-        hub pull-request -i <GitHubowy numer Issue> -b gui
+        hub pull-request -i <GitHubowy numer Issue> -b master
 
 gdzie ten GitHubowy numer Issue, to numer z kratką znajdujący się za nazwą issue np #1
 
