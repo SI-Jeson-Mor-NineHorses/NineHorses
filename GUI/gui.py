@@ -1,5 +1,9 @@
+import json
+
 import pygame
 import sys
+
+from LOGIC.TreeNode import TreeNode, print_tree, save_tree, load_tree
 from LOGIC.board import *
 
 pygame.init()
@@ -47,10 +51,10 @@ def select_square():
     return y, x
 
 
-def run_game():
+def run_game(game_tree):
     global sprites
-    gameover = False
-    winner = ""
+    gameover = False # flaga końca gry
+    winner = "" # identyfikator zwycięzcy
     selected = False
     trans_table = dict()
     checkWhite = False
@@ -58,6 +62,9 @@ def run_game():
 
     previous_move = ''
     current_move = ''
+
+    first_move_flag = 1 # flaga pierwszego ruchu
+    current_node = game_tree # ostatni dodany węzeł
 
     while not gameover:
         previous_move = current_move
@@ -74,7 +81,9 @@ def run_game():
                     # generuje "legalne" ruchy pionka
                     if piece != Empty and piece.color == "w":
                         # sprawdzenie dostępnych ruchów
-                        player_moves = piece.gen_legal_moves(board) #TODO: Lista powina trafić do drzewa
+                        player_moves = piece.gen_legal_moves(board)
+                        # all_player_moves = board.get_all_legal_moves("w")
+                        
                         # podświetlenie dostępnych ruchów
                         board.highlight_optional_moves(player_moves)
                         selected = True
@@ -89,6 +98,27 @@ def run_game():
                         oldx = piece.x
                         oldy = piece.y
                         dest = board.array[square[0]][square[1]]
+
+                        # MCTS =============================================
+                        # Przekazanie danych do drzewa
+                        if first_move_flag: # pierwszy ruch w rozgrywce
+                            node = TreeNode(player='w', _from='(%d, %d)' % (piece.y, piece.x), _to='(%d, %d)' % (square[0], square[1])) # inicjalizacja węzła
+                            temp = game_tree.add_child(node) # dodanie węzła do korzenia drzewa
+                            # zmiana obecnego węzła
+                            if temp is not None:
+                                current_node = temp
+                            else:
+                                current_node = node
+                            first_move_flag = 0
+                        else:  # kolejny ruch w rozgrywce
+                            node = TreeNode(player='w', _from='(%d, %d)' % (piece.y, piece.x), _to='(%d, %d)' % (square[0], square[1])) # inicjalizacja węzła
+                            temp = current_node.add_child(node) # dodanie węzła do obecnego (poprzedniego) węzła
+                            # zmiana obecnego węzła
+                            if temp is not None:
+                                current_node = temp
+                            else:
+                                current_node = node
+                        #===================================================
 
                         # wykonanie ruchu
                         board.move_piece(piece, square[0], square[1])
@@ -123,7 +153,8 @@ def run_game():
 
                     if piece != Empty and piece.color == "b":
                         # sprawdzenie dostępnych ruchów
-                        player_moves = piece.gen_legal_moves(board) #TODO: Lista powina trafić do drzewa
+                        player_moves = piece.gen_legal_moves(board)
+                        # print(player_moves)
                         # podświetlenie dostępnych ruchów
                         board.highlight_optional_moves(player_moves)
                         selected = True
@@ -136,6 +167,17 @@ def run_game():
                         oldx = piece.x
                         oldy = piece.y
                         dest = board.array[square[0]][square[1]]
+
+                        # MCTS =============================================
+                        # Przekazanie danych do drzewa
+                        node = TreeNode(player='b', _from='(%d, %d)' % (piece.y, piece.x), _to='(%d, %d)' % (square[0], square[1])) # inicjalizacja węzła
+                        temp = current_node.add_child(node) # dodanie węzła do obecnego (poprzedniego) węzła
+                        # zmiana obecnego węzła
+                        if temp is not None:
+                            current_node = temp
+                        else:
+                            current_node = node
+                        # ===================================================
 
                         # wykonanie ruchu
                         board.move_piece(piece, square[0], square[1])
@@ -183,10 +225,14 @@ def run_game():
         clock.tick(60)
 
     print("Wygrał: ", winner)
-
-
-#        board.print_to_terminal()
+    current_node.update_score(winner[0].lower()) # Propagacja wsteczna od ostatniego węzła
+    print_tree(game_tree) #wyświetlenie zaktualizowanego drzewa
 
 
 if __name__ == "__main__":
-    run_game()
+    # all_player_moves = board.get_all_legal_moves("w")
+    # print(all_player_moves)
+
+    tree = load_tree(file_name="game_moves.json")  # wczytanie drzewa z pliku (nazwa pliku przekazana jako parametr)
+    run_game(tree) # rozpoczęcie rozgrywki
+    save_tree(tree, file_name="game_moves.json") # zapisanie drzewa do pliku (nazwa pliku przekazana jako parametr)

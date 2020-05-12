@@ -18,6 +18,15 @@ class Board:
             [Knight("w", 8, i) for i in range(9)],
         ]
 
+    def get_all_legal_moves(self, color):
+        moves_list = []
+        for i in self.array:
+            for j in i:
+                if j.color == color:
+                    for move in j.gen_legal_moves(self):
+                        moves_list.append({color: {'from': (j.y, j.x), 'to': move}})
+        return moves_list
+
     def move_piece(self, piece, y, x):
         oldx = piece.x
         oldy = piece.y
