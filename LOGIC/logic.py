@@ -13,3 +13,9 @@ def check_gameover(arr, previous_move):
     elif previous_move == 'bN' and current_move == "_N":
         winner = "Black"
     return winner
+
+
+def get_tuple(text):
+    text = text[1:-1]
+    out = text.split(', ')
+    return int(out[0]), int(out[1])

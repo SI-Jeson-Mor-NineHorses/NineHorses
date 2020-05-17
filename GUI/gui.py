@@ -1,8 +1,9 @@
 import json
 
 import pygame
+import random
 import sys
-
+from LOGIC.logic import *
 from LOGIC.TreeNode import TreeNode, print_tree, save_tree, load_tree
 from LOGIC.board import *
 
@@ -29,6 +30,17 @@ all_sprites_list.add(sprites)
 def reload_sprites():
     return [piece for row in board.array for piece in row if piece]
 
+def select_piece_xy(color, x, y):
+    # get a list of all sprites that are under the mouse cursor
+    # lista wszystkich duszków, ktore sa pod kursorem myszy
+    clicked_sprites = [s for s in sprites if s.x == x and s.y == y]
+
+    # podświetla i zwaraca jeśli jest to pionek gracza
+    if len(clicked_sprites) == 1 and clicked_sprites[0].color == color:
+        clicked_sprites[0].highlight()
+        return clicked_sprites[0]
+    elif len(clicked_sprites) == 1:
+        return clicked_sprites[0]
 
 def select_piece(color):
     pos = pygame.mouse.get_pos()
@@ -83,7 +95,7 @@ def run_game(game_tree):
                         # sprawdzenie dostępnych ruchów
                         player_moves = piece.gen_legal_moves(board)
                         # all_player_moves = board.get_all_legal_moves("w")
-                        
+
                         # podświetlenie dostępnych ruchów
                         board.highlight_optional_moves(player_moves)
                         selected = True
@@ -142,61 +154,125 @@ def run_game(game_tree):
                         board.highlight_optional_moves(player_moves)
                         pygame.time.wait(1000)
         # drugi gracz
-        if player == 2:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
+        elif player == 2:
+            if current_node.children.__len__() > 0:
+                best_move = None
+                for next in current_node.children:
+                    if best_move == None:
+                        best_move = next
+                    elif next.score > best_move.score:
+                        best_move = next
+                move_from = get_tuple(best_move.move_from)
+                move_to = get_tuple(best_move.move_to)
 
-                elif event.type == pygame.MOUSEBUTTONDOWN and not selected:
-                    board.unhighlight_optional_moves()
-                    piece = select_piece("b")
+                piece = select_piece_xy("b", move_from[1], move_from[0])
 
-                    if piece != Empty and piece.color == "b":
-                        # sprawdzenie dostępnych ruchów
-                        player_moves = piece.gen_legal_moves(board)
-                        # print(player_moves)
-                        # podświetlenie dostępnych ruchów
-                        board.highlight_optional_moves(player_moves)
-                        selected = True
+                square = (move_to[0], move_to[1])
+                # wykonanie ruchu
+                dest = board.array[move_to[0]][move_to[1]]
+                # MCTS =============================================
+                # Przekazanie danych do drzewa
+                node = TreeNode(player='b', _from='(%d, %d)' % (piece.y, piece.x),
+                                _to='(%d, %d)' % (square[0], square[1]))  # inicjalizacja węzła
+                temp = current_node.add_child(node)  # dodanie węzła do obecnego (poprzedniego) węzła
+                # zmiana obecnego węzła
+                if temp is not None:
+                    current_node = temp
+                else:
+                    current_node = node
+                # ===================================================
+                board.move_piece(piece, move_to[0], move_to[1])
+                if dest:
+                    sprites = reload_sprites()
+                    all_sprites_list.empty()
+                    all_sprites_list.add(reload_sprites())
+                player = 1
 
-                elif event.type == pygame.MOUSEBUTTONDOWN and selected:
-                    board.unhighlight_optional_moves()
-                    square = select_square()
+            else:
+                all_player_moves = board.get_all_legal_moves("b")
+                rand_move = random.randint(0,len(all_player_moves)-1)
+                # print(all_player_moves[rand_move]['b']['from'],all_player_moves[rand_move]['b']['to'])
 
-                    if square in player_moves:
-                        oldx = piece.x
-                        oldy = piece.y
-                        dest = board.array[square[0]][square[1]]
+                piece = select_piece_xy("b", all_player_moves[rand_move]['b']['from'][1], all_player_moves[rand_move]['b']['from'][0])
 
-                        # MCTS =============================================
-                        # Przekazanie danych do drzewa
-                        node = TreeNode(player='b', _from='(%d, %d)' % (piece.y, piece.x), _to='(%d, %d)' % (square[0], square[1])) # inicjalizacja węzła
-                        temp = current_node.add_child(node) # dodanie węzła do obecnego (poprzedniego) węzła
-                        # zmiana obecnego węzła
-                        if temp is not None:
-                            current_node = temp
-                        else:
-                            current_node = node
-                        # ===================================================
+                square = (all_player_moves[rand_move]['b']['to'][0],all_player_moves[rand_move]['b']['to'][1])
+                # print(square)
+                # wykonanie ruchu
+                dest = board.array[all_player_moves[rand_move]['b']['to'][0]] [all_player_moves[rand_move]['b']['to'][1]]
+                # print(dest)
 
-                        # wykonanie ruchu
-                        board.move_piece(piece, square[0], square[1])
-                        if dest:
-                            sprites = reload_sprites()
-                            all_sprites_list.empty()
-                            all_sprites_list.add(reload_sprites())
+                # MCTS =============================================
+                # Przekazanie danych do drzewa
+                node = TreeNode(player='b', _from='(%d, %d)' % (piece.y, piece.x), _to='(%d, %d)' % (square[0], square[1])) # inicjalizacja węzła
+                temp = current_node.add_child(node) # dodanie węzła do obecnego (poprzedniego) węzła
+                # zmiana obecnego węzła
+                if temp is not None:
+                    current_node = temp
+                else:
+                    current_node = node
+                # ===================================================
 
-                        selected = False
-                        player = 1
+                board.move_piece(piece, all_player_moves[rand_move]['b']['to'][0], all_player_moves[rand_move]['b']['to'][1])
+                if dest:
+                    print("XD")
+                    sprites = reload_sprites()
+                    all_sprites_list.empty()
+                    all_sprites_list.add(reload_sprites())
 
-                    elif (piece.y, piece.x) == square:
-                        piece.unhighlight()
-                        selected = False
+                player=1
+            # for event in pygame.event.get():
+                # if event.type == pygame.QUIT:
+                #     sys.exit()
 
-                    else:
-                        pygame.display.update()
-                        board.highlight_optional_moves(player_moves)
-                        pygame.time.wait(1000)
+                # elif event.type == pygame.MOUSEBUTTONDOWN and not selected:
+                #     board.unhighlight_optional_moves()
+                #     piece = select_piece("b")
+                #
+                #     if piece != Empty and piece.color == "b":
+                #         # sprawdzenie dostępnych ruchów
+                #         player_moves = piece.gen_legal_moves(board)
+                #         # print(player_moves)
+                #         # podświetlenie dostępnych ruchów
+                #         board.highlight_optional_moves(player_moves)
+                #         selected = True
+
+                # elif event.type == pygame.MOUSEBUTTONDOWN and selected:
+                #     board.unhighlight_optional_moves()
+                #     square = select_square()
+                #
+                #     if square in player_moves:
+                #         oldx = piece.x
+                #         oldy = piece.y
+                #         dest = board.array[square[0]][square[1]]
+                #
+                #         # MCTS =============================================
+                #         # Przekazanie danych do drzewa
+                #         node = TreeNode(player='b', _from='(%d, %d)' % (piece.y, piece.x), _to='(%d, %d)' % (square[0], square[1])) # inicjalizacja węzła
+                #         temp = current_node.add_child(node) # dodanie węzła do obecnego (poprzedniego) węzła
+                #         # zmiana obecnego węzła
+                #         if temp is not None:
+                #             current_node = temp
+                #         else:
+                #             current_node = node
+                #         # ===================================================
+                #
+                #         # wykonanie ruchu
+                #         board.move_piece(piece, square[0], square[1])
+                #         if dest:
+                #             sprites = reload_sprites()
+                #             all_sprites_list.empty()
+                #             all_sprites_list.add(reload_sprites())
+                #
+                #         selected = False
+                #         player = 1
+                #
+                #     elif (piece.y, piece.x) == square:
+                #         piece.unhighlight()
+                #         selected = False
+                #
+            pygame.display.update()
+            # board.highlight_optional_moves(player_moves)
+            pygame.time.wait(1000)
 
         arr = []
         for j in range(9):

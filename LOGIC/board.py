@@ -1,6 +1,7 @@
 from LOGIC.pieces import *
 
 
+#TODO: sztywna symulacja rozgrywki bez gui
 class Board:
     # Plansza reprezentowana za pomocą tablicy 9x9. 'None' oznacza pusty kwadrat.
     def __init__(self):
@@ -26,6 +27,7 @@ class Board:
                     for move in j.gen_legal_moves(self):
                         moves_list.append({color: {'from': (j.y, j.x), 'to': move}})
         return moves_list
+
 
     def move_piece(self, piece, y, x):
         oldx = piece.x
