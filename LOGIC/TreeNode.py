@@ -40,7 +40,7 @@ class TreeNode(object):
         try:
             return (self.n_wins / self.n_plays) + math.sqrt(bias * math.log(parent_plays) / self.n_plays) # miara wartości zagrania
         except:
-            print("exception")
+            # print("exception")
             return 0  # miara wartości zagrania
 
     # dodawanie węzłów do drzewa
@@ -59,14 +59,13 @@ class TreeNode(object):
                 self.children.append(node)
         return output
 
-    # propagacja wsteczna TODO:(nie jestem pewien czy zwiększanie n_wins przeciwnikowi jest poprawne)
+    # propagacja wsteczna
     def update_score(self, winner):
         if self.parent is not None:
             self.n_plays += 1
-            if self.parent.player != winner:
+            if self.parent.player == winner:
                 self.parent.n_wins += 1
             self.parent.update_score(winner)
-            # self.score = (self.n_wins / self.n_plays) + math.sqrt(2 * math.log(self.parent.n_plays) / self.n_plays)
             self.score = self.calc_UCB1(2)
 
     # def find_node(self, node=None, target=""):
@@ -124,7 +123,7 @@ def load_tree(file_name="dict.json"):
             data = json.load(json_file)
             return make_tree(data)
     except IOError:
-        save_tree(TreeNode(name='ROOT', children=[]), file_name)  # zapis pustego drzewa
+        save_tree(TreeNode(name='ROOT', n_plays=1, n_wins=1, children=[]), file_name)  # zapis pustego drzewa
         return load_tree(file_name)
 
 # wyświetlenie drzewa w konsoli
@@ -134,6 +133,7 @@ def print_tree(node, file=None, _prefix="", _last=True):
         print(_prefix, "`- " if _last else "|- ", node.name, sep="", file=file)
     else:
         print(_prefix, "`- " if _last else "|- ", node.score, "=", node.n_wins, "/", node.n_plays, sep="", file=file)
+        # print(_prefix, "`- " if _last else "|- ", node.name, sep="", file=file)
     _prefix += "   " if _last else "|  "
     child_count = len(node.children)
     for i, child in enumerate(node.children):

@@ -41,6 +41,9 @@ class Board:
         self.array[y][x] = piece
         piece.unhighlight()
 
+    def get_piece(self, x, y):
+        return self.array[y][x]
+
     # Wypisanie tablicy planszy do konsoli
     def print_to_terminal(self):
         for j in range(9):

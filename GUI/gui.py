@@ -189,16 +189,27 @@ def run_game(game_tree):
                 player = 1
 
             else:
-                all_player_moves = board.get_all_legal_moves("b")
-                rand_move = random.randint(0,len(all_player_moves)-1)
+                mcts = MCTS()
+                input_board = simplify_board(board.array)
+                next = mcts.simulate(2, current_node, input_board, 2000)
+                print("BEST: ", next.score, '=', next.n_wins, '/', next.n_plays, next.name)
+
+                y_from = get_tuple(next.move_from)[0]
+                x_from = get_tuple(next.move_from)[1]
+
+                y_to = get_tuple(next.move_to)[0]
+                x_to = get_tuple(next.move_to)[1]
+
+                # all_player_moves = board.get_all_legal_moves("b")
+                # rand_move = random.randint(0,len(all_player_moves))
                 # print(all_player_moves[rand_move]['b']['from'],all_player_moves[rand_move]['b']['to'])
 
-                piece = select_piece_xy("b", all_player_moves[rand_move]['b']['from'][1], all_player_moves[rand_move]['b']['from'][0])
+                piece = select_piece_xy("b", x_from, y_from)
 
-                square = (all_player_moves[rand_move]['b']['to'][0],all_player_moves[rand_move]['b']['to'][1])
+                square = (y_to, x_to)
                 # print(square)
                 # wykonanie ruchu
-                dest = board.array[all_player_moves[rand_move]['b']['to'][0]] [all_player_moves[rand_move]['b']['to'][1]]
+                dest = board.array[y_to] [x_to]
                 # print(dest)
 
                 # MCTS =============================================
@@ -211,10 +222,9 @@ def run_game(game_tree):
                 else:
                     current_node = node
                 # ===================================================
-
-                board.move_piece(piece, all_player_moves[rand_move]['b']['to'][0], all_player_moves[rand_move]['b']['to'][1])
+                print(y_to,x_to)
+                board.move_piece(piece, y_to, x_to)
                 if dest:
-                    print("XD")
                     sprites = reload_sprites()
                     all_sprites_list.empty()
                     all_sprites_list.add(reload_sprites())
@@ -301,6 +311,7 @@ def run_game(game_tree):
         clock.tick(60)
 
     print("Wygrał: ", winner)
+    current_node.n_wins+=1
     current_node.update_score(winner[0].lower()) # Propagacja wsteczna od ostatniego węzła
     print_tree(game_tree) #wyświetlenie zaktualizowanego drzewa
 
