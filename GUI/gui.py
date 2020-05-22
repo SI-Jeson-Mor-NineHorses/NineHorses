@@ -160,9 +160,9 @@ def run_game(game_tree, mode):
                             # board.highlight_optional_moves(player_moves)
                             pygame.time.wait(1000)
             elif mode == 2:
-                # if current_node.children.__len__() > 0 and current_node.children[0].score < current_node.score:
+                if current_node.children.__len__() > 0 and current_node.children[0].score < current_node.score:
                 #TODO: zmienić kryteria wyboru ruchu (drzewo vs symulacja)
-                if current_node.children.__len__() > 0:
+                # if current_node.children.__len__() > 0:
                     best_move = None
                     best_moves = []
                     for next in current_node.children:
@@ -174,7 +174,7 @@ def run_game(game_tree, mode):
                         elif next.score == best_move.score:
                             best_moves.append(next)
                     if len(best_moves) > 1:
-                        best_move = best_moves[random.randint(0,len(best_moves))]
+                        best_move = best_moves[random.randint(0,len(best_moves)-1)]
                     move_from = get_tuple(best_move.move_from)
                     move_to = get_tuple(best_move.move_to)
 
@@ -220,13 +220,25 @@ def run_game(game_tree, mode):
                     dest = board.array[y_to] [x_to]
                     # MCTS =============================================
                     # Przekazanie danych do drzewa
-                    node = TreeNode(player='w', _from='(%d, %d)' % (piece.y, piece.x), _to='(%d, %d)' % (square[0], square[1])) # inicjalizacja węzła
-                    temp = current_node.add_child(node) # dodanie węzła do obecnego (poprzedniego) węzła
-                    # zmiana obecnego węzła
-                    if temp is not None:
-                        current_node = temp
+                    if first_move_flag:  # pierwszy ruch w rozgrywce
+                        node = TreeNode(player='w', _from='(%d, %d)' % (piece.y, piece.x),
+                                        _to='(%d, %d)' % (square[0], square[1]))  # inicjalizacja węzła
+                        temp = game_tree.add_child(node)  # dodanie węzła do korzenia drzewa
+                        # zmiana obecnego węzła
+                        if temp is not None:
+                            current_node = temp
+                        else:
+                            current_node = node
+                        first_move_flag = 0
                     else:
-                        current_node = node
+                        node = TreeNode(player='w', _from='(%d, %d)' % (piece.y, piece.x),
+                                        _to='(%d, %d)' % (square[0], square[1])) # inicjalizacja węzła
+                        temp = current_node.add_child(node) # dodanie węzła do obecnego (poprzedniego) węzła
+                        # zmiana obecnego węzła
+                        if temp is not None:
+                            current_node = temp
+                        else:
+                            current_node = node
                     # ===================================================
                     # print(y_to,x_to)
                     board.move_piece(piece, y_to, x_to)
@@ -417,5 +429,5 @@ if __name__ == "__main__":
     # print(all_player_moves)
 
     tree = load_tree(file_name="game_moves.json")  # wczytanie drzewa z pliku (nazwa pliku przekazana jako parametr)
-    run_game(tree,2) # rozpoczęcie rozgrywki (drzewo rozgrywki, tryb gry)
+    run_game(tree,1) # rozpoczęcie rozgrywki (drzewo rozgrywki, tryb gry)
     save_tree(tree, file_name="game_moves.json") # zapisanie drzewa do pliku (nazwa pliku przekazana jako parametr)

@@ -226,8 +226,9 @@ if __name__ == "__main__":
         [Thing("w", 8, i) for i in range(9)],
     ]
     mcts = MCTS()
-    tree = TreeNode(name='ROOT',n_plays=1,n_wins=1, children=[])
+    tree = TreeNode(name='ROOT', n_plays=1, n_wins=1, children=[])
+    next = mcts.simulate(1, tree, main_board, 1000)
+    print("BEST: ", next.score, '=', next.n_wins, '/', next.n_plays, next.name)
+
     next = mcts.simulate(2, tree, main_board, 1000)
-    # save_tree(tree)
-    # print_tree(tree)
     print("BEST: ", next.score, '=', next.n_wins, '/', next.n_plays, next.name)
