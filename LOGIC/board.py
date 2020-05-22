@@ -1,7 +1,6 @@
 from LOGIC.pieces import *
 
 
-#TODO: sztywna symulacja rozgrywki bez gui
 class Board:
     # Plansza reprezentowana za pomocą tablicy 9x9. 'None' oznacza pusty kwadrat.
     def __init__(self):
