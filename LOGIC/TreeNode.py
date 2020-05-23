@@ -36,7 +36,7 @@ class TreeNode(object):
         if self.parent is not None:
             parent_plays = self.parent.n_plays
         else:
-            parent_plays = 1
+            parent_plays = 0.1
         try:
             return (self.n_wins / self.n_plays) + bias * math.sqrt(math.log(parent_plays) / self.n_plays) # miara wartości zagrania
         except:
@@ -63,32 +63,10 @@ class TreeNode(object):
     def update_score(self, winner):
         if self.parent is not None:
             self.n_plays += 1
-            if self.parent.player == winner:
-                self.parent.n_wins += 1
+            if self.player == winner:
+                self.n_wins += 1
             self.parent.update_score(winner)
-            self.score = self.calc_UCB1(1.4)
-
-    # def find_node(self, node=None, target=""):
-    #     if node is None:
-    #         print(self.name)
-    #         node = self
-    #         output = None
-    #         for i, child in enumerate(self.children):
-    #             node = child.find_node(node=child, target=target)
-    #             if isinstance(node, TreeNode):
-    #                 if node.name == target:
-    #                     output = node
-    #         return output
-    #     else:
-    #         for i, child in enumerate(node.children):
-    #             if child.name == target:
-    #                 return child
-    #             else:
-    #                 node = child.find_node(node=child, target=target)
-    #                 if isinstance(node, TreeNode):
-    #                     if node.name == target:
-    #                         return node
-    #     return node
+            self.score = self.calc_UCB1(1.4)#TODO: Sprawdzić optymalną wartość
 
     # serializacja drzewa
     def to_dict(self, node):
@@ -131,6 +109,8 @@ def print_tree(node, file=None, _prefix="", _last=True):
     # print implementation from https://vallentin.dev/2016/11/29/pretty-print-tree
     if node.name == 'ROOT':
         print(_prefix, "`- " if _last else "|- ", node.name, sep="", file=file)
+    elif node.move_from == '(4, 4)' or node.move_to == '(4, 4)':
+        print(_prefix, "`========= [!] " if _last else "|- ", node.score, "=", node.n_wins, "/", node.n_plays, " ========= ", node.name, sep="", file=file)
     else:
         print(_prefix, "`- " if _last else "|- ", node.score, "=", node.n_wins, "/", node.n_plays," ", node.name, sep="", file=file)
         # print(_prefix, "`- " if _last else "|- ", node.name, sep="", file=file)

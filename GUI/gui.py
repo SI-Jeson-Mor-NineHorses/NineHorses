@@ -205,6 +205,7 @@ def run_game(game_tree, mode):
                     mcts = MCTS()
                     input_board = simplify_board(board.array)
                     #TODO: symulacje przeprowadzić na osobnym wątku tak aby nie blokowała pętli gui
+                    print(current_node.name)
                     next = mcts.simulate(1, current_node, input_board, 1000)
                     print("BEST w: ", next.score, '=', next.n_wins, '/', next.n_plays, next.name)
 
@@ -296,6 +297,7 @@ def run_game(game_tree, mode):
                 else:
                     mcts = MCTS()
                     input_board = simplify_board(board.array)
+                    print(current_node.name)
                     next = mcts.simulate(2, current_node, input_board, 1000)
                     print("BEST b: ", next.score, '=', next.n_wins, '/', next.n_plays, next.name)
 
@@ -429,5 +431,5 @@ if __name__ == "__main__":
     # print(all_player_moves)
 
     tree = load_tree(file_name="game_moves.json")  # wczytanie drzewa z pliku (nazwa pliku przekazana jako parametr)
-    run_game(tree,1) # rozpoczęcie rozgrywki (drzewo rozgrywki, tryb gry)
+    run_game(tree,2) # rozpoczęcie rozgrywki (drzewo rozgrywki, tryb gry)
     save_tree(tree, file_name="game_moves.json") # zapisanie drzewa do pliku (nazwa pliku przekazana jako parametr)

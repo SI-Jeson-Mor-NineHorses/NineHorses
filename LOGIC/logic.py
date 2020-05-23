@@ -59,29 +59,12 @@ class MCTS:
 
     def get_all_legal_moves(self, color, board):
         moves_list = []
-        win_moves = []
         for i in board:
             for j in i:
                 if j.color == color:
-                    # automatyczne sugerowanie zakończenia gry
-                    if j.y == 4 and j.x == 4:
-                        for move in j.gen_legal_moves(board):
-                            win_moves.append({color: {'from': (j.y, j.x), 'to': move}})
-                    # else:
-                    #     for move in j.gen_legal_moves(board):
-                    #         if(move[0] == 4 and move[1] == 4):
-                    #             pass
-                    #             # moves_list = []
-                    #             # moves_list.append({color: {'from': (j.y, j.x), 'to': move}})
-                    #             # return moves_list
-                    #         else:
-                    #             moves_list.append({color: {'from': (j.y, j.x), 'to': move}})
                     for move in j.gen_legal_moves(board):
                         moves_list.append({color: {'from': (j.y, j.x), 'to': move}})
-        if len(win_moves)>0:
-            return win_moves
-        else:
-            return moves_list
+        return moves_list
 
     def move_piece(self, board, thing, y, x):
         board[y][x].color = thing.color
@@ -98,8 +81,10 @@ class MCTS:
             winner = ""  # identyfikator zwycięzcy
             player = start_player
 
-            previous_move = ''
-            current_move = ''
+            previous_move = '_'
+            # print(board[4][4].color)
+            current_move = board[4][4].color # inicjalizacja aktualnego stanu środka
+
             current_node = simulation_tree  # ostatni dodany węzeł
             first_move_flag = 1  # flaga pierwszego ruchu
             try:
@@ -207,6 +192,7 @@ class MCTS:
             # print_tree(root)
             time -= 1
         # print_children_tree(simulation_tree)
+        # print_tree(simulation_tree)
         best = simulation_tree.children[0]
         for x in simulation_tree.children:
             if x.score > best.score:
@@ -229,13 +215,19 @@ if __name__ == "__main__":
         [Thing("_", 7, x) for x in range(9)],
         [Thing("w", 8, i) for i in range(9)],
     ]
-    # main_board[4][4].color = 'w'
+    main_board[4][4].color = 'w'
     # main_board[5][6].color = 'b'
 
     mcts = MCTS()
     tree = TreeNode(name='ROOT', n_plays=1, n_wins=1, children=[])
-    next = mcts.simulate(1, tree, main_board, 1000)
-    print("BEST: ", next.score, '=', next.n_wins, '/', next.n_plays, next.name)
+    # par = TreeNode(name='b:(6, 3)=>(4, 2)', _from='(6, 3)', _to='(4, 2)', player='b', n_plays=1, n_wins=0, score=1.0)
+    # center = TreeNode(name='w:(6, 3)=>(4, 4)', _from='(6, 3)', _to='(4, 4)', player='w', n_plays=1, n_wins=0, score=1.0)
+    # center.add_child(par)
+    # tree.add_child(center)
+
 
     next = mcts.simulate(1, tree, main_board, 1000)
     print("BEST: ", next.score, '=', next.n_wins, '/', next.n_plays, next.name)
+
+    # next = mcts.simulate(1, tree, main_board, 1)
+    # print("BEST: ", next.score, '=', next.n_wins, '/', next.n_plays, next.name)

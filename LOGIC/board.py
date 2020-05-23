@@ -27,7 +27,6 @@ class Board:
                         moves_list.append({color: {'from': (j.y, j.x), 'to': move}})
         return moves_list
 
-
     def move_piece(self, piece, y, x):
         oldx = piece.x
         oldy = piece.y
