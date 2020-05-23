@@ -205,7 +205,7 @@ def run_game(game_tree, mode):
                     mcts = MCTS()
                     input_board = simplify_board(board.array)
                     #TODO: symulacje przeprowadzić na osobnym wątku tak aby nie blokowała pętli gui
-                    next = mcts.simulate(1, current_node, input_board, 2000)
+                    next = mcts.simulate(1, current_node, input_board, 1000)
                     print("BEST w: ", next.score, '=', next.n_wins, '/', next.n_plays, next.name)
 
                     y_from = get_tuple(next.move_from)[0]
@@ -296,7 +296,7 @@ def run_game(game_tree, mode):
                 else:
                     mcts = MCTS()
                     input_board = simplify_board(board.array)
-                    next = mcts.simulate(2, current_node, input_board, 2000)
+                    next = mcts.simulate(2, current_node, input_board, 1000)
                     print("BEST b: ", next.score, '=', next.n_wins, '/', next.n_plays, next.name)
 
                     y_from = get_tuple(next.move_from)[0]

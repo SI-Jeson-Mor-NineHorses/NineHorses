@@ -38,7 +38,7 @@ class TreeNode(object):
         else:
             parent_plays = 1
         try:
-            return (self.n_wins / self.n_plays) + math.sqrt(bias * math.log(parent_plays) / self.n_plays) # miara wartości zagrania
+            return (self.n_wins / self.n_plays) + bias * math.sqrt(math.log(parent_plays) / self.n_plays) # miara wartości zagrania
         except:
             # print("exception")
             return 0  # miara wartości zagrania
@@ -66,7 +66,7 @@ class TreeNode(object):
             if self.parent.player == winner:
                 self.parent.n_wins += 1
             self.parent.update_score(winner)
-            self.score = self.calc_UCB1(2)
+            self.score = self.calc_UCB1(1.4)
 
     # def find_node(self, node=None, target=""):
     #     if node is None:
@@ -132,13 +132,27 @@ def print_tree(node, file=None, _prefix="", _last=True):
     if node.name == 'ROOT':
         print(_prefix, "`- " if _last else "|- ", node.name, sep="", file=file)
     else:
-        print(_prefix, "`- " if _last else "|- ", node.score, "=", node.n_wins, "/", node.n_plays, sep="", file=file)
+        print(_prefix, "`- " if _last else "|- ", node.score, "=", node.n_wins, "/", node.n_plays," ", node.name, sep="", file=file)
         # print(_prefix, "`- " if _last else "|- ", node.name, sep="", file=file)
     _prefix += "   " if _last else "|  "
     child_count = len(node.children)
     for i, child in enumerate(node.children):
         _last = i == (child_count - 1)
         print_tree(child, file, _prefix, _last)
+
+def print_children_tree(node, file=None, _prefix="", _last=True):
+    # print implementation from https://vallentin.dev/2016/11/29/pretty-print-tree
+    if node.name == 'ROOT':
+        print(_prefix, "`- " if _last else "|- ", node.name, sep="", file=file)
+    else:
+        # print(_prefix, "`- " if _last else "|- ", node.score, "=", node.n_wins, "/", node.n_plays, sep="", file=file)
+        print(_prefix, "`- " if _last else "|- ", node.name, sep="", file=file)
+    _prefix += "   " if _last else "|  "
+    child_count = len(node.children)
+    for i, child in enumerate(node.children):
+        _last = i == (child_count - 1)
+        print(_prefix, "`- " if _last else "|- ", child.name," ", child.score, " = ", child.n_wins, "/", child.n_plays, sep="", file=file)
+        # print_tree(child, file, _prefix, _last)
 
 
 if __name__ == "__main__":
