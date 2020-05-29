@@ -19,8 +19,10 @@ class TreeNode(object):
 
         self.parent = parent # rodzic węzła
 
-        self.score = self.calc_UCB1(2) # współczynnik określający wartość węzła / miara wartości zagrania
+        self.score = score#self.calc_UCB1(2) # współczynnik określający wartość węzła / miara wartości zagrania
 
+        self.is_expanded = False
+        self.unexpanded_moves = []
         self.children = []  # tablica na potomków
         if children is not None:
             for child in children:
@@ -35,13 +37,16 @@ class TreeNode(object):
             return 0
         if self.parent is not None:
             parent_plays = self.parent.n_plays
-        else:
-            parent_plays = 0.1
+        # if self.parent.player is 'x':
+        #     return self.n_wins / self.n_plays
+        # else:
+        #     parent_plays = 0.1
+
         try:
             return (self.n_wins / self.n_plays) + bias * math.sqrt(math.log(parent_plays) / self.n_plays) # miara wartości zagrania
         except:
             # print("exception")
-            return 0  # miara wartości zagrania
+            return self.n_wins / self.n_plays  # miara wartości zagrania
 
     # dodawanie węzłów do drzewa
     def add_child(self, node):
@@ -67,6 +72,11 @@ class TreeNode(object):
                 self.n_wins += 1
             self.parent.update_score(winner)
             self.score = self.calc_UCB1(1.4)#TODO: Sprawdzić optymalną wartość
+        elif self.player is 'x':
+            self.n_plays = 1
+        else:
+            self.n_plays += 1
+
 
     # serializacja drzewa
     def to_dict(self, node):
@@ -123,7 +133,7 @@ def print_tree(node, file=None, _prefix="", _last=True):
 def print_children_tree(node, file=None, _prefix="", _last=True):
     # print implementation from https://vallentin.dev/2016/11/29/pretty-print-tree
     if node.name == 'ROOT':
-        print(_prefix, "`- " if _last else "|- ", node.name, sep="", file=file)
+        print(_prefix, "`- " if _last else "|- ", node.name, " ",node.score, "=", node.n_wins, "/", node.n_plays, sep="", file=file)
     else:
         # print(_prefix, "`- " if _last else "|- ", node.score, "=", node.n_wins, "/", node.n_plays, sep="", file=file)
         print(_prefix, "`- " if _last else "|- ", node.name, sep="", file=file)
@@ -131,6 +141,7 @@ def print_children_tree(node, file=None, _prefix="", _last=True):
     child_count = len(node.children)
     for i, child in enumerate(node.children):
         _last = i == (child_count - 1)
+        # if child.n_plays > 1:
         print(_prefix, "`- " if _last else "|- ", child.name," ", child.score, " = ", child.n_wins, "/", child.n_plays, sep="", file=file)
         # print_tree(child, file, _prefix, _last)
 
