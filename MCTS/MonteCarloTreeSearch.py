@@ -88,7 +88,7 @@ class MonteCarloTreeSearch:
             tempNode.getParent().getState().setWinScore(-1 * sys.maxsize - 1)
             return boardStatus
 
-        while boardStatus == Board.IN_PROGRESS:
+        while boardStatus == -1:
             tempState.togglePlayer()
             tempState.randomPlay()
             boardStatus = tempState.getBoard().checkStatus()
