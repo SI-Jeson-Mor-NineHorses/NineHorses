@@ -1,4 +1,7 @@
+import random
+
 from GAME_LOGIC.Board import Board
+from GAME_LOGIC.Position import Position
 
 
 class State:
@@ -11,7 +14,7 @@ class State:
         elif board is not None:
             self.board = board
         else:
-            board = Board()
+            self.board = Board()
 
     def getBoard(self):
         return self.board
@@ -40,10 +43,17 @@ class State:
     def setWinScore(self, winScore):
         self.winScore = winScore
 
-    # TODO: zmiana logiki na nine horses w getAllPossibleStates
     def getAllPossibleStates(self):
         possibleStates = []
-        availablePositions = self.board.getEmptyPositons
+        availableMoves = self.board.getPossibleMoves(self.playerNo)
+        for move in availableMoves:
+            newState = State(self.board)
+            newState.setPlayerNo(3 - self.playerNo)
+            pos_from = Position(move[self.playerNo]['from'][0], move[self.playerNo]['from'][1])
+            pos_to = Position(move[self.playerNo]['to'][0], move[self.playerNo]['to'][1])
+            newState.getBoard().performMove(newState.getPlayerNo(), pos1=pos_from, pos2=pos_to)
+            possibleStates.append(newState)
+        return possibleStates
 
     def incrementVisit(self):
         self.visitCount += 1
@@ -52,12 +62,13 @@ class State:
         # warning: overflow
         self.winScore += score
 
-    # TODO: zmiana logiki na nine horses w randomPlay
     def randomPlay(self):
-        pass
-        # 1 pobranie listy dostępnych ruchów dla danego playerNo
-        # 2 random.choice(self.movesArray)
-        # 3 preform move
+        moves = self.board.getPossibleMoves(self.playerNo)  # pobranie listy dostępnych ruchów dla danego playerNo
+        random_play = random.choice(moves)  # random.choice(moves)
+        pos_from = Position(random_play[self.playerNo]['from'][0], random_play[self.playerNo]['from'][1])
+        pos_to = Position(random_play[self.playerNo]['to'][0], random_play[self.playerNo]['to'][1])
+
+        self.board.performMove(self.playerNo, pos1=pos_from, pos2=pos_to)  # wykonanie ruchu
 
     def togglePlayer(self):
         self.playerNo = 3 - self.playerNo
