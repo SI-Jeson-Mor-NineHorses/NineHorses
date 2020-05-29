@@ -4,7 +4,7 @@ from GAME_LOGIC.Position import Position
 class Board:
     boardValues = []
     totalMoves = 0
-    IN_PROGRESS = 1
+    IN_PROGRESS = -1
     DRAW = 0
     P1 = 1
     P2 = 2
