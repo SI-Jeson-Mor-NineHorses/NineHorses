@@ -23,7 +23,7 @@ class MonteCarloTreeSearch:
     def getMillisForCurrentLevel(self):
         return 2 * (self.level - 1) + 1
 
-    def findNextMove(self, board, playerNo, root):
+    def findNextMove(self, board, playerNo):
         start = int(round(time.time() * 1000))
         end = start + 60 * self.getMillisForCurrentLevel()
 
