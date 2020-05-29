@@ -2,14 +2,15 @@ from GAME_LOGIC.Position import Position
 
 
 class Board:
-    def __init__(self, board=None, boardSize=None, boardValues=None, totalMoves=None):
-        self.totalMoves = 0
-        self.IN_PROGRESS = 1
-        self.DRAW = 0
-        self.P1 = 1
-        self.P2 = 2
-        self.WINNER = 0
+    boardValues = []
+    totalMoves = 0
+    IN_PROGRESS = 1
+    DRAW = 0
+    P1 = 1
+    P2 = 2
+    WINNER = 0
 
+    def __init__(self, board=None, boardSize=None, boardValues=None, totalMoves=None):
         if board is not None:
             self.boardValues = board
 
@@ -45,7 +46,7 @@ class Board:
     def performMove(self, player, pos1, pos2):
         self.totalMoves += 1
         if pos1.getX() == 4 and pos1.getY() == 4:
-            self.WINNER = player
+            Board.WINNER = player
         self.boardValues[pos1.getY()][pos1.getX()] = 0
         self.boardValues[pos2.getY()][pos2.getX()] = player
 
@@ -62,13 +63,13 @@ class Board:
                 arr.append(i)
 
         if 1 not in arr:
-            return self.P2
+            return Board.P2
         elif 2 not in arr:
-            return self.P1
-        elif self.WINNER != 0:
-            return self.WINNER
+            return Board.P1
+        elif Board.WINNER != 0:
+            return Board.WINNER
         else:
-            return self.DRAW
+            return Board.DRAW
 
     def printBoard(self):
         for j in range(9):
@@ -137,5 +138,5 @@ if __name__ == "__main__":
     print(moves)
     print(len(moves))
     plansza.printStatus()
-    plansza.performMove(1, Position(4, 4), Position(6, 3))
+    plansza.performMove(2, Position(4, 4), Position(6, 3))
     plansza.printStatus()
