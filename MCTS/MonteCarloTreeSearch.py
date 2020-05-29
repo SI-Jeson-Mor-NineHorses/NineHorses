@@ -1,6 +1,6 @@
 # TODO: MonteCarloTreeSearch class
-from TREE import Tree
-from TREE import Node
+from TREE.Tree import Tree
+from TREE.Node import Node
 from MCTS import UCT
 from GAME_LOGIC import Board
 import time
@@ -28,7 +28,7 @@ class MonteCarloTreeSearch:
         end = start + 60 * self.getMillisForCurrentLevel()
 
         self.opponent = 3 - playerNo
-        tree = Tree.Tree()
+        tree = Tree()
         rootNode = tree.getRoot()
         rootNode.getState().setBoard(board)
         rootNode.getState().setPlayerNo(self.opponent)
