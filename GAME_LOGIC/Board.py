@@ -8,9 +8,9 @@ class Board:
     DRAW = 0
     P1 = 1
     P2 = 2
-    WINNER = 0
 
     def __init__(self, board=None, boardSize=None, boardValues=None, totalMoves=None):
+        self.WINNER = 0
         if board is not None:
             self.boardValues = board
 
@@ -46,7 +46,7 @@ class Board:
     def performMove(self, player, pos1, pos2):
         self.totalMoves += 1
         if pos1.getX() == 4 and pos1.getY() == 4:
-            Board.WINNER = player
+            self.WINNER = player
         self.boardValues[pos1.getY()][pos1.getX()] = 0
         self.boardValues[pos2.getY()][pos2.getX()] = player
 
@@ -66,8 +66,8 @@ class Board:
             return Board.P2
         elif 2 not in arr:
             return Board.P1
-        elif Board.WINNER != 0:
-            return Board.WINNER
+        elif self.WINNER != 0:
+            return self.WINNER
         else:
             return -1
 
@@ -138,5 +138,5 @@ if __name__ == "__main__":
     print(moves)
     print(len(moves))
     plansza.printStatus()
-    plansza.performMove(2, Position(4, 4), Position(6, 3))
+    plansza.performMove(2, Position(y=4, x=4), Position(y=6, x=3))
     plansza.printStatus()

@@ -7,10 +7,15 @@ if __name__ == '__main__':
     player = Board.P1
     mcts = MonteCarloTreeSearch()
 
+    board.printBoard()
+    print("\n\n")
     while True:
         board = mcts.findNextMove(board, player)
-        if board.checkStatus() != -1:
+        if board.checkStatus() == 1 or board.checkStatus() == 2:
+            print("winner: ", board.checkStatus())
             break
+        board.printBoard()
+        print('')
         player = 3 - player
 
     winStatus = board.checkStatus()

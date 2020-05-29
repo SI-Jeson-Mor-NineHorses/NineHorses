@@ -1,5 +1,6 @@
 import random
 from MCTS.State import State
+from MCTS.UCT import calcUctValue, uctValue
 
 
 class Node:
@@ -52,7 +53,11 @@ class Node:
 
     def getChildWithMaxScore(self):
         best = self.childArray[0]
+        best.getState().score = calcUctValue(self.getState().getVisitCount(), best.getState().getWinScore(), best.getState().getVisitCount())
         for child in self.childArray:
-            if child.getState().getVisitCount() > best.getState().getVisitCount():
+            child.getState().score = calcUctValue(self.getState().getVisitCount(), child.getState().getWinScore(), child.getState().getVisitCount())
+            # print(child.getState().score)
+            if child.getState().score > best.getState().score:
                 best = child
+        # print(best.getState().score, end="")
         return best

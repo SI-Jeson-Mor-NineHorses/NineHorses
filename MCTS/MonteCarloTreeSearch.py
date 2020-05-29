@@ -1,5 +1,5 @@
 # TODO: MonteCarloTreeSearch class
-from TREE.Tree import Tree
+from TREE.Tree import Tree, printTree, print_children_tree
 from TREE.Node import Node
 from MCTS import UCT
 from GAME_LOGIC import Board
@@ -11,7 +11,7 @@ import sys
 class MonteCarloTreeSearch:
     def __init__(self):
         self.level = 3
-        self.WIN_SCORE = 10
+        self.WIN_SCORE = 1
         self.opponent = 0
 
     def getLevel(self):
@@ -25,12 +25,12 @@ class MonteCarloTreeSearch:
 
     def findNextMove(self, board, playerNo):
         start = int(round(time.time() * 1000))
-        end = start + 60 * self.getMillisForCurrentLevel()
+        end = start + 20 * 1000 #* self.getMillisForCurrentLevel()
 
         self.opponent = 3 - playerNo
         tree = Tree()
         rootNode = tree.getRoot()
-        rootNode.getState().setBoard(board)
+        rootNode.getState().setBoard(copy.deepcopy(board))
         rootNode.getState().setPlayerNo(self.opponent)
 
         while int(round(time.time() * 1000)) < end:
@@ -39,7 +39,8 @@ class MonteCarloTreeSearch:
 
             #Phase 2 - Expansion
             if promisingNode.getState().getBoard().checkStatus() == -1:
-                self.expandNode(promisingNode)
+                if promisingNode.getState().getVisitCount() > 70:
+                    self.expandNode(promisingNode)
 
             #Phase 3 - Simulation
             nodeToExplore = promisingNode
@@ -49,24 +50,31 @@ class MonteCarloTreeSearch:
             playoutResult = self.simulateRandomPlayout(nodeToExplore)
 
             #Phase 4 - Update
-
             self.backPropagation(nodeToExplore, playoutResult)
 
+        # print(nodeToExplore.getState().winScore)
         winnerNode = rootNode.getChildWithMaxScore()
+        print_children_tree(rootNode)
+        # printTree(rootNode)
+
+        print("# BEST #  [", winnerNode.getState().playerNo, '] ',
+              winnerNode.getState().move_from, winnerNode.getState().move_to, " ",
+              winnerNode.getState().winScore,'/',winnerNode.getState().visitCount, ' = ',
+              winnerNode.getState().score)
         tree.setRoot(winnerNode)
-        return winnerNode.getState.getBoard()
+        return winnerNode.getState().getBoard()
 
     def selectPromisingNode(self, rootNode):
+        # node = copy.deepcopy(rootNode)
         node = rootNode
-        print(node.getChildArray())
+        # print(node.getChildArray())
         while len(node.getChildArray()) != 0:
             node = UCT.findBestNodeWithUCT(node)
-            print(node)
-
         return node
 
     def expandNode(self, node):
         possibleStates = node.getState().getAllPossibleStates()
+        # print(possibleStates)
         for state in possibleStates:
             newNode = Node(state=state)
             newNode.setParent(node)
@@ -74,8 +82,8 @@ class MonteCarloTreeSearch:
             node.getChildArray().append(newNode)
 
     def backPropagation(self, nodeToExplore, playerNo):
-        tempNode = copy.deepcopy(nodeToExplore)
-        while tempNode != None:
+        tempNode = nodeToExplore
+        while tempNode is not None:
             tempNode.getState().incrementVisit()
             if tempNode.getState().getPlayerNo() == playerNo:
                 tempNode.getState().addScore(self.WIN_SCORE)
@@ -83,9 +91,11 @@ class MonteCarloTreeSearch:
 
     def simulateRandomPlayout(self, node):
         tempNode = copy.deepcopy(node)
+        # tempNode = node
         tempState = copy.deepcopy(tempNode.getState())
         boardStatus = tempState.getBoard().checkStatus()
 
+        # print(self.opponent, ' == ', boardStatus)
         if boardStatus == self.opponent:
             tempNode.getParent().getState().setWinScore(-1 * sys.maxsize - 1)
             return boardStatus
@@ -94,5 +104,4 @@ class MonteCarloTreeSearch:
             tempState.togglePlayer()
             tempState.randomPlay()
             boardStatus = tempState.getBoard().checkStatus()
-
         return boardStatus

@@ -1,7 +1,10 @@
 class Position:
-    def __init__(self, y=None, x=None):
+    def __init__(self, y, x):
         self.y = y
         self.x = x
+
+    def __repr__(self):
+        return "(%s, %s)" % (self.y, self.x)
 
     def getX(self):
         return self.x
