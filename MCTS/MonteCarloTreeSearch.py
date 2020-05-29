@@ -38,7 +38,7 @@ class MonteCarloTreeSearch:
             promisingNode = self.selectPromisingNode(rootNode)
 
             #Phase 2 - Expansion
-            if promisingNode.getState().getBoard().checkStatus() == board.IN_PROGRESS:
+            if promisingNode.getState().getBoard().checkStatus() == -1:
                 self.expandNode(promisingNode)
 
             #Phase 3 - Simulation
@@ -57,9 +57,11 @@ class MonteCarloTreeSearch:
         return winnerNode.getState.getBoard()
 
     def selectPromisingNode(self, rootNode):
-        node = copy.deepcopy(rootNode)
+        node = rootNode
+        print(node.getChildArray())
         while len(node.getChildArray()) != 0:
             node = UCT.findBestNodeWithUCT(node)
+            print(node)
 
         return node
 
@@ -69,7 +71,7 @@ class MonteCarloTreeSearch:
             newNode = Node(state=state)
             newNode.setParent(node)
             newNode.getState().setPlayerNo(node.getState().getOpponent())
-            node.getChildArray().add(newNode)
+            node.getChildArray().append(newNode)
 
     def backPropagation(self, nodeToExplore, playerNo):
         tempNode = copy.deepcopy(nodeToExplore)
@@ -80,7 +82,7 @@ class MonteCarloTreeSearch:
             tempNode = tempNode.getParent()
 
     def simulateRandomPlayout(self, node):
-        tempNode = copy.deepcopy(Node(node = node))
+        tempNode = copy.deepcopy(node)
         tempState = copy.deepcopy(tempNode.getState())
         boardStatus = tempState.getBoard().checkStatus()
 

@@ -5,9 +5,11 @@ from GAME_LOGIC.Position import Position
 
 
 class State:
+    visitCount = 0
+    winScore = 0
     def __init__(self, state=None, board=None):
         if state is not None:
-            self.board = Board(state.getBoard())
+            self.board = Board(board = state.getBoard())
             self.playerNo = state.getPlayerNo()
             self.visitCount = state.getVisitCount()
             self.winScore = state.getWinScore()
@@ -47,7 +49,7 @@ class State:
         possibleStates = []
         availableMoves = self.board.getPossibleMoves(self.playerNo)
         for move in availableMoves:
-            newState = State(self.board)
+            newState = State(board=self.board)
             newState.setPlayerNo(3 - self.playerNo)
             pos_from = Position(move[self.playerNo]['from'][0], move[self.playerNo]['from'][1])
             pos_to = Position(move[self.playerNo]['to'][0], move[self.playerNo]['to'][1])

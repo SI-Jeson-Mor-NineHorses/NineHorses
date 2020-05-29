@@ -19,7 +19,7 @@ class Node:
                 self.parent = parent
         else:
             self.childArray = []
-            self.state = State(node.getState())
+            self.state = State(state=node.getState())
             if node.getParent() is not None:
                 self.parent = node.getParent()
             childArray = node.getChildArray()

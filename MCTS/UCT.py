@@ -12,10 +12,11 @@ def uctValue(totalVisit, nodeWinScore, nodeVisit):
 
 
 def findBestNodeWithUCT(node):
-    parentVisit = node.getState().MCTS.State.getVisitCount()
-    best = 0
+    parentVisit = node.getState().getVisitCount()
+    max = 0
+    best = None
     for c in node.getChildArray():
-        c = uctValue(parentVisit, c.getState().getWinScore(), c.getState().getVisitCount())
-        if c > best:
+        x = uctValue(parentVisit, c.getState().getWinScore(), c.getState().getVisitCount())
+        if x > best:
             best = c
     return best

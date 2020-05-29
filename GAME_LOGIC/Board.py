@@ -69,7 +69,7 @@ class Board:
         elif Board.WINNER != 0:
             return Board.WINNER
         else:
-            return Board.DRAW
+            return -1
 
     def printBoard(self):
         for j in range(9):
