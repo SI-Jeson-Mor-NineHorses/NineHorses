@@ -1,6 +1,6 @@
 import random
-from MCTS.State import State
-from MCTS.UCT import calcUctValue, uctValue
+from V2.MCTS.State import State
+from V2.MCTS.UCT import calcUctValue
 
 
 class Node:

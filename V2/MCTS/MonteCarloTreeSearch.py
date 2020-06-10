@@ -1,8 +1,7 @@
 # TODO: MonteCarloTreeSearch class
-from TREE.Tree import Tree, printTree, print_children_tree
-from TREE.Node import Node
-from MCTS import UCT
-from GAME_LOGIC import Board
+from V2.TREE.Tree import Tree, print_children_tree
+from V2.TREE.Node import Node
+from V2.MCTS import UCT
 import time
 import copy
 import sys

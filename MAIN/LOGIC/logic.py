@@ -1,7 +1,7 @@
 import random
 import time
 import copy
-from LOGIC.TreeNode import TreeNode, print_tree, save_tree, load_tree, print_children_tree
+from MAIN.LOGIC.TreeNode import TreeNode, print_children_tree
 
 def get_tuple(text):
     text = text[1:-1]

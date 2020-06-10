@@ -2,8 +2,8 @@ import copy
 import random
 import sys
 
-from GAME_LOGIC.Board import Board
-from GAME_LOGIC.Position import Position
+from V2.GAME_LOGIC.Board import Board
+from V2.GAME_LOGIC.Position import Position
 
 
 class State:

@@ -1,4 +1,4 @@
-from LOGIC.pieces import *
+from MAIN.LOGIC.pieces import *
 
 
 class Board:

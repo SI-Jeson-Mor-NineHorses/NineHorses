@@ -1,11 +1,8 @@
-import json
-
 import pygame
-import random
 import sys
-from LOGIC.logic import *
-from LOGIC.TreeNode import TreeNode, print_tree, save_tree, load_tree
-from LOGIC.board import *
+from MAIN.LOGIC.logic import *
+from MAIN.LOGIC.TreeNode import TreeNode, print_tree, save_tree, load_tree
+from MAIN.LOGIC.board import *
 
 pygame.init()
 pygame.font.init()
@@ -16,7 +13,7 @@ pygame.display.set_caption('Python Jeson Mor Game')
 clock = pygame.time.Clock()  # odświeżanie okna
 
 # Załadowanie wygerowanej planszy
-bg = pygame.image.load("../assets/board.png").convert()
+bg = pygame.image.load("../MAIN/assets/board.png").convert()
 player = 1
 
 board = Board()
@@ -162,6 +159,7 @@ def run_game(game_tree, mode):
                             pygame.time.wait(1000)
             elif mode == 2:
                 #TODO: zmienić kryteria wyboru ruchu (drzewo vs symulacja)
+
                 # if current_node.n_plays>=10:
                 #     # możemy brać wszystkie albo zrobić symulacje i wybrać 5 obiecujących
                 #     mcts = MCTS()
@@ -469,12 +467,3 @@ def run_game(game_tree, mode):
     print("Wygrał: ", winner)
     current_node.update_score(winner[0].lower()) # Propagacja wsteczna od ostatniego węzła
     print_tree(game_tree) #wyświetlenie zaktualizowanego drzewa
-
-
-if __name__ == "__main__":
-    # all_player_moves = board.get_all_legal_moves("w")
-    # print(all_player_moves)
-
-    tree = load_tree(file_name="game_moves.json")  # wczytanie drzewa z pliku (nazwa pliku przekazana jako parametr)
-    run_game(tree,1) # rozpoczęcie rozgrywki (drzewo rozgrywki, tryb gry)
-    save_tree(tree, file_name="game_moves.json") # zapisanie drzewa do pliku (nazwa pliku przekazana jako parametr)

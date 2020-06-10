@@ -60,7 +60,7 @@ class Knight(Piece):
     def __init__(self, color, y, x):
         super().__init__(color,(255, 0, 0), y, x)
         self.sprite = pygame.image.load(
-            "../assets/{}knight.png".format(self.color))
+            "../MAIN/assets/{}knight.png".format(self.color))
         self.symbol = "N"
         self.image.blit(self.sprite, (0, 0))
 
@@ -83,7 +83,7 @@ class Empty(Piece):
     def __init__(self, color,  y, x):
         super().__init__(color, (0, 200, 0), y, x)
         self.sprite = pygame.image.load(
-            "../assets/{}knight.png".format(self.color))
+            "../MAIN/assets/{}knight.png".format(self.color))
         self.symbol = "N"
         self.image.blit(self.sprite, (0, 0))
 

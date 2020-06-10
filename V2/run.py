@@ -1,8 +1,10 @@
-from GAME_LOGIC.Board import Board
-from MCTS.MonteCarloTreeSearch import MonteCarloTreeSearch
+from V2.GAME_LOGIC.Board import Board
+from V2.MCTS.MonteCarloTreeSearch import MonteCarloTreeSearch
 
 if __name__ == '__main__':
-    print('hello world!')
+    '''
+    Console MCTS-like NineHorses Simulation
+    '''
     board = Board()
     player = Board.P1
     mcts = MonteCarloTreeSearch()

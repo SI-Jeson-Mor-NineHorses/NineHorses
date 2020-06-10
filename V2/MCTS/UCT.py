@@ -1,8 +1,6 @@
 # TODO: UCT class
-import random
 import sys
 import math
-import MCTS.State
 
 
 def calcUctValue(totalVisit, nodeWinScore, nodeVisit):

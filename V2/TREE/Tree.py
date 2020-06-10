@@ -1,4 +1,4 @@
-from TREE.Node import Node
+from V2.TREE.Node import Node
 
 
 class Tree:

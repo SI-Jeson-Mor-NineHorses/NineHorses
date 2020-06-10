@@ -1,4 +1,4 @@
-from GAME_LOGIC.Position import Position
+from V2.GAME_LOGIC.Position import Position
 
 
 class Board:
